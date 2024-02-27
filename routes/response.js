@@ -1,5 +1,5 @@
 const express = require("express");
-const response = express.Router()
+const response = express.Router().use(express.json(), express.urlencoded({ extended: false }));
 require("cheerio");
 const { CheerioWebBaseLoader } = require("langchain/document_loaders/web/cheerio");
 const {RecursiveCharacterTextSplitter} = require("langchain/text_splitter");
@@ -10,7 +10,12 @@ const { ChatPromptTemplate } = require("@langchain/core/prompts");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
 const { createStuffDocumentsChain } = require("langchain/chains/combine_documents");
 
-response.get("/", async (req, res)=> {
+response.post("/", async (req, res)=> {
+
+    const chat = req.body.content;
+
+    console.log("chat", chat)
+
     const loadDoc = new CheerioWebBaseLoader(
         "https://docs.google.com/document/d/1Jqq8bTQFQhGvnnhq-FmaIA-CpcWUpsdlUIJzW0S1smI/edit?usp=sharing"
     )
@@ -33,14 +38,16 @@ response.get("/", async (req, res)=> {
         outputParser: new StringOutputParser()
     })
 
-    const retrievedDocs = await retriever.getRelevantDocuments("what is are the skills available with 3MTT?")
+    const retrievedDocs = await retriever.getRelevantDocuments(chat)
 
     const genOutput = await ragChain.invoke({
-        question: "what is are the skills available with 3MTT?",
+        question: chat,
         context: retrievedDocs,
     })
 
     console.log(genOutput)  
+
+    res.send(genOutput)
 
 })
 
