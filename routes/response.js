@@ -14,7 +14,7 @@ response.post("/", async (req, res)=> {
 
     const chat = req.body.content;
 
-    console.log("chat", chat)
+    //console.log("chat", chat)
 
     const loadDoc = new CheerioWebBaseLoader(
         "https://docs.google.com/document/d/1Jqq8bTQFQhGvnnhq-FmaIA-CpcWUpsdlUIJzW0S1smI/edit?usp=sharing"
@@ -45,7 +45,7 @@ response.post("/", async (req, res)=> {
         context: retrievedDocs,
     })
 
-    console.log(genOutput)  
+    //console.log(genOutput)  
 
     res.send(genOutput)
 
